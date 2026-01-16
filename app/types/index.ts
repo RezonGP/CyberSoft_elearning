@@ -1,6 +1,4 @@
 import { AxiosError } from "axios";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
-import { api } from "../server/api";
 
 
 

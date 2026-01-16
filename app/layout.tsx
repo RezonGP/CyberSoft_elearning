@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 };
 
 import { Inter } from "next/font/google"
+import Footer from "./components/footer";
 const inter = Inter({ subsets: ["latin"] })
 export default function RootLayout({
   children,
@@ -32,6 +33,7 @@ export default function RootLayout({
       >
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );
