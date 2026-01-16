@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { TCategoryService, } from "./../../server/category"
+import { TCategoryService, } from "../../app/server/category"
 import { useState, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 
@@ -21,7 +21,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-type Category = { maDanhMuc: string; tenDanhMuc: string }
+export type Category = { maDanhMuc: string; tenDanhMuc: string }
 
 export default function Header() {
     const [categories, setCategories] = useState<Category[]>([])
@@ -111,7 +111,6 @@ export default function Header() {
 
                 {/* 4. ACTIONS */}
                 <div className="ml-auto flex items-center gap-3">
-                    <Button variant="ghost" className="hidden sm:inline-flex">Đăng ký</Button>
                     <Link href="/auth">
 
                         <Button className="bg-orange-600 hover:bg-orange-700 text-white shadow-md transition-all">

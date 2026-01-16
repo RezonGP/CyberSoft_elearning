@@ -1,3 +1,4 @@
+'use client'
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -9,8 +10,8 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-
-export function CardDemo() {
+// client
+const FormLogin = () => {
     return (
         <Card className="w-full max-w-sm mx-auto mt-10">
             <CardHeader>
@@ -42,3 +43,6 @@ export function CardDemo() {
         </Card>
     )
 }
+
+export default FormLogin
+
