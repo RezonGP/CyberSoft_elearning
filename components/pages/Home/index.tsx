@@ -64,7 +64,7 @@ const HomePage = () => {
                     Nâng cao kỹ năng của bạn với các lộ trình đào tạo chuyên sâu từ chuyên gia hàng đầu tại CyberSoft.
                 </p>
             </div>
-
+            {course.length > 0 && <Hero data={course[0]} />}
             {/* Sử dụng Grid System để chia cột chuẩn: 1 cột (mobile), 2 cột (tablet), 3 hoặc 4 cột (desktop) */}
             <div className="flex   gap-8">
                 {loading ? (

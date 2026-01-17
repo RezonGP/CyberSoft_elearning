@@ -10,8 +10,10 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-export function Hero({ data }: { data: KhoaHoc }) {
-    console.log("dataHero", data);
+export const Hero = ({ data }: { data?: KhoaHoc }) => { // Thêm dấu ? ở đây
+    if (!data) {
+        return <div>Đây là Banner mặc định khi chưa có dữ liệu</div>
+    }
 
     return (
         <section className="relative w-full bg-white py-4">
@@ -49,7 +51,7 @@ export function Hero({ data }: { data: KhoaHoc }) {
                             <div className="w-full md:w-full h-full absolute inset-0 md:relative md:flex-1 overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-r from-[#F7F9FA] via-transparent to-transparent z-10 hidden md:block" />
                                 <img
-                                    src="https://s.udemycdn.com/home/non-logged-in-homepage/rebrand/ub-promotional-banner-desktop.png"
+                                    src="https://cybersoft.edu.vn/wp-content/uploads/2022/12/173498625_1748188092035509_2804459782783227284_n-1.png"
                                     alt="Hero"
                                     className="w-full h-full object-cover object-right"
                                 />
@@ -64,6 +66,11 @@ export function Hero({ data }: { data: KhoaHoc }) {
                                 <div className="max-w-xl">
                                     <h2 className="text-4xl font-bold mb-4 text-orange-500">Học lập trình thực chiến</h2>
                                     <p className="text-xl text-slate-300">Trở thành lập trình viên chuyên nghiệp sau 6 tháng cùng CyberSoft.</p>
+                                    <img
+                                        src="https://cybersoft.edu.vn/wp-content/uploads/2017/04/MAX-OP1.png"
+                                        alt="Hero"
+                                        className="w-full h-full object-cover object-right"
+                                    />
                                 </div>
                             </div>
                         </div>

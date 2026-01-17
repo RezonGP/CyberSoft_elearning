@@ -9,7 +9,7 @@ import { Check } from "lucide-react"
 import { KhoaHoc } from "../pages/Home"
 
 export function CourseCard({ data }: { data: KhoaHoc }) {
-    console.log("data", data)
+    if (!data) return <div>Loading...</div>; // Kiểm tra nếu không có data
     return (
         <div className="p-10 bg-slate-50 flex justify-center">
             <HoverCard openDelay={200} closeDelay={100}>
@@ -42,7 +42,7 @@ export function CourseCard({ data }: { data: KhoaHoc }) {
                 <HoverCardContent side="right" align="start" className="w-[350px] p-6 shadow-2xl border-2">
                     <div className="space-y-4">
                         <h3 className="font-bold text-xl leading-snug">
-                            Lập Trình Python Từ Cơ Bản Đến Nâng Cao Trong 30 Ngày
+                            {data.tenKhoaHoc} Từ Cơ Bản Đến Nâng Cao Trong 30 Ngày
                         </h3>
 
                         <div className="flex items-center gap-2 text-xs">

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { TCategoryService, } from "../../app/server/category"
 import { useState, useEffect } from "react"
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
 
 import {
     DropdownMenu,
@@ -23,12 +23,50 @@ import {
 
 export type Category = { maDanhMuc: string; tenDanhMuc: string }
 
+type AuthUser = {
+    taiKhoan?: string
+    hoTen?: string
+    email?: string
+}
+
 export default function Header() {
     const [categories, setCategories] = useState<Category[]>([])
     const [loading, setLoading] = useState(false)
+    const [user, setUser] = useState<AuthUser | null>(null)
+    const router = useRouter()
 
     useEffect(() => {
         loadCategories()
+    }, [])
+
+    useEffect(() => {
+        if (typeof window === "undefined") return
+
+        const loadUser = () => {
+            const storedUser = localStorage.getItem("USER_ADMIN")
+            if (!storedUser) {
+                setUser(null)
+                return
+            }
+            try {
+                const parsed = JSON.parse(storedUser) as AuthUser
+                setUser(parsed)
+            } catch {
+                setUser(null)
+            }
+        }
+
+        loadUser()
+
+        const handleAuthChanged = () => {
+            loadUser()
+        }
+
+        window.addEventListener("auth-changed", handleAuthChanged)
+
+        return () => {
+            window.removeEventListener("auth-changed", handleAuthChanged)
+        }
     }, [])
 
     const loadCategories = async () => {
@@ -50,7 +88,14 @@ export default function Header() {
         }
     }
 
-
+    const handleLogout = () => {
+        if (typeof window !== "undefined") {
+            localStorage.removeItem("USER_ADMIN")
+            window.dispatchEvent(new Event("auth-changed"))
+        }
+        setUser(null)
+        router.push("/auth")
+    }
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-md dark:bg-slate-950/80">
@@ -111,14 +156,26 @@ export default function Header() {
 
                 {/* 4. ACTIONS */}
                 <div className="ml-auto flex items-center gap-3">
-                    <Link href="/auth">
-
-                        <Button className="bg-orange-600 hover:bg-orange-700 text-white shadow-md transition-all">
-
-                            Đăng nhập
-                        </Button>
-                    </Link>
-
+                    {user ? (
+                        <>
+                            <span className="hidden sm:inline text-sm text-gray-700">
+                                Xin chào, {user.hoTen || user.taiKhoan}
+                            </span>
+                            <Button
+                                variant="outline"
+                                className="border-orange-600 text-orange-600 hover:bg-orange-50"
+                                onClick={handleLogout}
+                            >
+                                Đăng xuất
+                            </Button>
+                        </>
+                    ) : (
+                        <Link href="/auth">
+                            <Button className="bg-orange-600 hover:bg-orange-700 text-white shadow-md transition-all">
+                                Đăng nhập
+                            </Button>
+                        </Link>
+                    )}
                 </div>
 
             </div>
