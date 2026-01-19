@@ -1,3 +1,5 @@
+"use client"
+
 import { api } from "./api";
 import type { TApiResponse } from "../types";
 

@@ -131,9 +131,12 @@ export default function Header() {
                                 <DropdownMenuItem disabled>Đang tải dữ liệu...</DropdownMenuItem>
                             ) : categories.length > 0 ? (
                                 categories.map((cat) => (
-                                    <DropdownMenuItem key={cat.maDanhMuc} className="cursor-pointer py-2">
-                                        {cat.tenDanhMuc}
+                                    <DropdownMenuItem key={cat.maDanhMuc} asChild className="cursor-pointer py-2">
+                                        <Link href={`/programming/${cat.maDanhMuc}`}>
+                                            {cat.tenDanhMuc}
+                                        </Link>
                                     </DropdownMenuItem>
+
                                 ))
                             ) : (
                                 <DropdownMenuItem disabled>Không có dữ liệu</DropdownMenuItem>
