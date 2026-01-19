@@ -5,6 +5,9 @@ import { Navigation, Autoplay, Pagination } from 'swiper/modules';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { KhoaHoc } from "../pages/Home"
 
+import { Button } from "@/components/ui/button"
+
+
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -39,12 +42,16 @@ export const Hero = ({ data }: { data?: KhoaHoc }) => { // Thêm dấu ? ở đ�
                             <div className="w-full md:w-1/2 p-8 md:p-16 z-10">
                                 <div className="bg-white p-8 shadow-xl border border-slate-100 max-w-md animate-in fade-in slide-in-from-left duration-700">
                                     <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-4">
-                                        Hãy tiến lên phía trước để đạt được mục tiêu của bạn.
+                                        Tiết kiệm 20% cho một năm học
                                     </h2>
                                     <p className="text-slate-600 text-lg leading-relaxed mb-4">
                                         Hãy lấp đầy những lỗ hổng kỹ năng của bạn với các khóa học có thể tạo ra tác động lớn nhất. Các khóa học có giá từ 279.000 đ kết thúc tối nay.
                                     </p>
+                                    <div className="flex flex-wrap items-center gap-2 md:flex-row">
+                                        <Button variant="secondary" className='bg-amber-500'>Tìm Hiểu Thêm</Button>
+                                    </div>
                                 </div>
+
                             </div>
 
                             {/* Hình ảnh bên phải */}

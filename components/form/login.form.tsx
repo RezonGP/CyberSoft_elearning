@@ -28,10 +28,20 @@ const FormLogin = () => {
         setLoading(true)
         try {
             const user = await AuthService.login({ taiKhoan, matKhau })
+            if (!user || typeof user !== "object") {
+                throw new Error("Phản hồi đăng nhập không hợp lệ")
+            }
             if (typeof window !== "undefined") {
                 localStorage.setItem("USER_ADMIN", JSON.stringify(user))
+                window.dispatchEvent(new Event("auth-changed"))
             }
-            router.push("/")
+            const role = (user as any)?.maLoaiNguoiDung
+            const dest = role === "GV" ? "/admin" : "/"
+            if (typeof window !== "undefined") {
+                window.location.assign(dest)
+            } else {
+                router.replace(dest)
+            }
         } catch (err: any) {
             const message =
                 err?.response?.data?.content ||
@@ -104,5 +114,4 @@ const FormLogin = () => {
 }
 
 export default FormLogin
-
 

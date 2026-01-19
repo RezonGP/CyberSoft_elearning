@@ -6,13 +6,23 @@ export const api = axios.create({
 })
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-    const user = localStorage.getItem("USER_ADMIN");
-    const accessToken = user ? JSON.parse(user).accessToken : "";
-
-    if (accessToken) {
-        config.headers["Authorization"] = `Authorization ${accessToken}`;
+    let accessToken = "";
+    if (typeof window !== "undefined") {
+        const raw = localStorage.getItem("USER_ADMIN");
+        if (raw) {
+            try {
+                const parsed = JSON.parse(raw);
+                accessToken = parsed?.accessToken || "";
+            } catch {
+                accessToken = "";
+            }
+        }
     }
-    config.headers["TokenCybersoft"] = TOKEN_CYBERSOFT;
-
+    if (accessToken) {
+        config.headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+    if (TOKEN_CYBERSOFT) {
+        config.headers["TokenCybersoft"] = TOKEN_CYBERSOFT;
+    }
     return config;
 });
