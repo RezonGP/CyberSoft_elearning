@@ -3,24 +3,7 @@ import { CourseCard } from "@/components/ItemCourse"
 import { ServiceCourse } from "@/app/server/course"
 import { useEffect, useState } from "react";
 import { Hero } from "@/components/hero";
-
-// Định nghĩa lại Type để khớp với dữ liệu thực tế (danhMucKhoaHoc là object)
-export type KhoaHoc = {
-    maKhoaHoc?: string;
-    biDanh?: string;
-    tenKhoaHoc?: string;
-    moTa?: string;
-    luotXem?: number;
-    hinhAnh?: string;
-    maNhom?: string;
-    ngayTao?: string;
-    soLuongHocVien?: number;
-    nguoiTao?: any;
-    danhMucKhoaHoc?: {
-        maDanhMucKhoahoc: string;
-        tenDanhMucKhoaHoc: string;
-    };
-}
+import { KhoaHoc } from "@/app/types";
 
 const HomePage = () => {
     const [course, setCourse] = useState<KhoaHoc[]>([])

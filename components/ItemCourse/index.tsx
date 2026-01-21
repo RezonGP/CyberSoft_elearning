@@ -6,7 +6,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Check } from "lucide-react"
-import { KhoaHoc } from "../pages/Home"
+import { KhoaHoc } from "@/app/types"
 
 export function CourseCard({ data }: { data: KhoaHoc }) {
     if (!data) return <div>Loading...</div>; // Kiểm tra nếu không có data

@@ -1,6 +1,6 @@
-import { KhoaHoc } from '@/components/pages/Home';
+import { KhoaHoc } from '@/app/types';
 import { CourseCard } from '@/components/ItemCourse';
-import React from 'react'
+import React from 'react';
 
 export default async function Programming(props: any) {
     const { params } = props;
@@ -8,15 +8,35 @@ export default async function Programming(props: any) {
 
     const fetchDataById = async (maDanhMuc: string): Promise<KhoaHoc[]> => {
         try {
+            // Cách 1: Gọi API lấy khóa học theo danh mục
             const response = await fetch(`https://elearningnew.cybersoft.edu.vn/api/QuanLyKhoaHoc/LayKhoaHocTheoDanhMuc?maDanhMuc=${maDanhMuc}&MaNhom=GP01`);
+
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
+            }
+
             const data = await response.json();
-            // API có thể trả về array trực tiếp hoặc trong field content
             if (Array.isArray(data)) return data;
             if (data && Array.isArray(data.content)) return data.content;
-            return [];
+
+            throw new Error("Invalid data format");
         } catch (error) {
-            console.log(error);
-            return [];
+            console.log(`Failed to fetch by category ${maDanhMuc}, trying fallback...`);
+            try {
+                // Cách 2: Fallback - Gọi API lấy tất cả khóa học và filter
+                const response = await fetch(`https://elearningnew.cybersoft.edu.vn/api/QuanLyKhoaHoc/LayDanhSachKhoaHoc?MaNhom=GP01`);
+                const data = await response.json();
+
+                let allCourses: KhoaHoc[] = [];
+                if (Array.isArray(data)) allCourses = data;
+                else if (data && Array.isArray(data.content)) allCourses = data.content;
+
+                // Filter theo mã danh mục
+                return allCourses.filter(course => course.danhMucKhoaHoc?.maDanhMucKhoahoc === maDanhMuc);
+            } catch (err) {
+                console.log("Fallback failed", err);
+                return [];
+            }
         };
     };
 
