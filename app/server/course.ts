@@ -9,4 +9,8 @@ export const ServiceCourse = {
         const res = await api.get<TApiResponse<unknown[]>>(`${END_POINT}/LayDanhSachKhoaHoc`)
         return res.data;
     },
+    dangKyKhoaHoc: async (payload: { maKhoaHoc: string; taiKhoan: string }) => {
+        const res = await api.post<TApiResponse<string>>(`${END_POINT}/DangKyKhoaHoc`, payload)
+        return res.data;
+    }
 } 

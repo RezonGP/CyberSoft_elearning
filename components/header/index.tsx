@@ -20,6 +20,10 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useCart } from "@/app/context/CartContext"
+import { ShoppingCart } from "lucide-react"
+import { CartSummaryCard } from "@/components/Cart/CartSummaryCard"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 export type Category = { maDanhMuc: string; tenDanhMuc: string }
 
@@ -34,6 +38,7 @@ export default function Header() {
     const [loading, setLoading] = useState(false)
     const [user, setUser] = useState<AuthUser | null>(null)
     const router = useRouter()
+    const { cart } = useCart()
 
     useEffect(() => {
         loadCategories()
@@ -159,6 +164,23 @@ export default function Header() {
 
                 {/* 4. ACTIONS */}
                 <div className="ml-auto flex items-center gap-3">
+                    {/* CART ICON */}
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant="ghost" size="icon" className="relative mr-2">
+                                <ShoppingCart className="h-5 w-5 text-gray-700" />
+                                {cart.length > 0 && (
+                                    <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-600 text-xs text-white flex items-center justify-center font-bold">
+                                        {cart.length}
+                                    </span>
+                                )}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-96 p-0 border-none bg-transparent shadow-none" align="end">
+                            <CartSummaryCard />
+                        </PopoverContent>
+                    </Popover>
+
                     {user ? (
                         <>
                             <span className="hidden sm:inline text-sm text-gray-700">

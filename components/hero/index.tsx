@@ -3,7 +3,7 @@ import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay, Pagination } from 'swiper/modules';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { KhoaHoc } from "../pages/Home"
+import { KhoaHoc } from "@/app/types"
 
 import { Button } from "@/components/ui/button"
 
