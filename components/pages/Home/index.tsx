@@ -4,6 +4,14 @@ import { ServiceCourse } from "@/app/server/course"
 import { useEffect, useState } from "react";
 import { Hero } from "@/components/hero";
 import { KhoaHoc } from "@/app/types";
+import TrustedCompanies from "@/components/navbar";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Autoplay } from 'swiper/modules';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
 
 const HomePage = () => {
     const [course, setCourse] = useState<KhoaHoc[]>([])
@@ -38,7 +46,10 @@ const HomePage = () => {
 
 
             {/* Tiêu đề được tách riêng ra một khối độc lập */}
-            <div className="mb-10 text-left">
+
+            {course.length > 0 && <Hero data={course[0]} />}
+            {/* Sử dụng Grid System để chia cột chuẩn: 1 cột (mobile), 2 cột (tablet), 3 hoặc 4 cột (desktop) */}
+            <div className="mb-10 text-left mt-12">
                 <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
                     Các khóa học thịnh hành
                 </h1>
@@ -47,22 +58,54 @@ const HomePage = () => {
                     Nâng cao kỹ năng của bạn với các lộ trình đào tạo chuyên sâu từ chuyên gia hàng đầu tại CyberSoft.
                 </p>
             </div>
-            {course.length > 0 && <Hero data={course[0]} />}
-            {/* Sử dụng Grid System để chia cột chuẩn: 1 cột (mobile), 2 cột (tablet), 3 hoặc 4 cột (desktop) */}
-            <div className="flex   gap-8">
+
+            <div className="relative group">
                 {loading ? (
-                    <div className="col-span-full text-center py-20 text-slate-500">Đang tải khóa học...</div>
+                    <div className="text-center py-20 text-slate-500">Đang tải khóa học...</div>
                 ) : (
-                    course.slice(1, 7).map((item) => (
-                        <CourseCard
-                            key={item.maKhoaHoc}
-                            data={item}
-                        />
-                    ))
+                    <>
+                        <Swiper
+                            modules={[Navigation, Autoplay]}
+                            spaceBetween={20}
+                            slidesPerView={1}
+                            navigation={{
+                                nextEl: '.course-next',
+                                prevEl: '.course-prev',
+                            }}
+                            breakpoints={{
+                                640: {
+                                    slidesPerView: 2,
+                                },
+                                768: {
+                                    slidesPerView: 3,
+                                },
+                                1024: {
+                                    slidesPerView: 4,
+                                },
+                            }}
+                            className="py-4"
+                        >
+                            {course.slice(1).map((item) => (
+                                <SwiperSlide key={item.maKhoaHoc} className="h-auto">
+                                    <CourseCard data={item} />
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+
+                        {/* Navigation Buttons */}
+                        <button className="course-prev absolute left-[-20px] top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center border border-slate-200 hover:bg-slate-50 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0">
+                            <ChevronLeft className="w-6 h-6 text-slate-700" />
+                        </button>
+                        <button className="course-next absolute right-[-20px] top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center border border-slate-200 hover:bg-slate-50 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0">
+                            <ChevronRight className="w-6 h-6 text-slate-700" />
+                        </button>
+                    </>
                 )}
             </div>
 
-        </main>
+            {/* Navbar */}
+            <TrustedCompanies />
+        </main >
     )
 }
 
