@@ -20,7 +20,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { KhoaHoc } from "@/app/types"
 import { ServiceCourse } from "@/app/server/course"
-import { api } from "@/app/server/api"
 
 const revenueData = [
     { month: "Tháng 1", value: 40 },
@@ -54,6 +53,7 @@ const AdminPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [authorized, setAuthorized] = useState<boolean | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const [deleting, setDeleting] = useState<string | null>(null);
     const router = useRouter();
     const itemsPerPage = 5;
 
@@ -70,7 +70,33 @@ const AdminPage: React.FC = () => {
             console.error("Failed to load courses:", error);
         } finally {
             setLoading(false);
-            loading
+        }
+    };
+
+    const handleDeleteCourse = async (maKhoaHoc: string, tenKhoaHoc: string) => {
+        const confirmDelete = window.confirm(`Bạn có chắc chắn muốn xóa khóa học "${tenKhoaHoc}"?`);
+        if (!confirmDelete) return;
+
+        try {
+            setDeleting(maKhoaHoc);
+            await ServiceCourse.xoaKhoaHoc(maKhoaHoc);
+
+            setCourses(prev => prev.filter(c => c.maKhoaHoc !== maKhoaHoc));
+            alert("Xóa khóa học thành công!");
+
+            // Reset page if needed
+            const newTotalPages = Math.ceil((courses.length - 1) / itemsPerPage);
+            if (currentPage > newTotalPages && newTotalPages > 0) {
+                setCurrentPage(newTotalPages);
+            }
+        } catch (error: any) {
+            console.error("Failed to delete course:", error);
+            const errorMessage = typeof error?.response?.data === 'string'
+                ? error.response.data
+                : "Lỗi hệ thống hoặc khóa học không thể xóa (đã có học viên).";
+            alert(`Xóa thất bại: ${errorMessage}`);
+        } finally {
+            setDeleting(null);
         }
     };
 
@@ -197,7 +223,14 @@ const AdminPage: React.FC = () => {
                                                 <Badge className="bg-orange-500">Đang bán</Badge>
                                             </td>
                                             <td>
-                                                <Button variant="destructive" className="ml-2 text-white ">Xóa</Button>
+                                                <Button
+                                                    variant="destructive"
+                                                    className="ml-2 text-white"
+                                                    onClick={() => handleDeleteCourse(course.maKhoaHoc, course.tenKhoaHoc)}
+                                                    disabled={deleting === course.maKhoaHoc}
+                                                >
+                                                    {deleting === course.maKhoaHoc ? "Đang xóa..." : "Xóa"}
+                                                </Button>
                                                 <Button variant="ghost" className="ml-2 text-black bg-amber-400 hover:bg-amber-500 ">Sửa</Button>
                                             </td>
                                         </tr>

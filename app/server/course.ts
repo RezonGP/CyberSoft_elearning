@@ -12,5 +12,13 @@ export const ServiceCourse = {
     dangKyKhoaHoc: async (payload: { maKhoaHoc: string; taiKhoan: string }) => {
         const res = await api.post<TApiResponse<string>>(`${END_POINT}/DangKyKhoaHoc`, payload)
         return res.data;
-    }
-} 
+    },
+    xoaKhoaHoc: async (maKhoaHoc: string) => {
+        // Sử dụng params để axios tự động encode và thử dùng MaKhoaHoc (PascalCase)
+        const res = await api.delete<TApiResponse<string>>(`${END_POINT}/XoaKhoaHoc`, {
+            params: { MaKhoaHoc: maKhoaHoc }
+        })
+        return res.data;
+    },
+}
+
