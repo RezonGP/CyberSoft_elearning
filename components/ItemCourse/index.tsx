@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import {
     HoverCard,
@@ -14,6 +15,12 @@ import { useCart } from "@/app/context/CartContext";
 
 export function CourseCard({ data }: { data: KhoaHoc }) {
     const { addToCart, cart } = useCart();
+    const [imgSrc, setImgSrc] = useState(data.hinhAnh);
+
+    // Cập nhật imgSrc khi prop data.hinhAnh thay đổi (ví dụ khi fetch lại dữ liệu)
+    if (imgSrc !== data.hinhAnh && !imgSrc.includes("cybersoft.edu.vn")) {
+        setImgSrc(data.hinhAnh);
+    }
 
     if (!data) return null;
 
@@ -30,10 +37,11 @@ export function CourseCard({ data }: { data: KhoaHoc }) {
                         {/* Image */}
                         <div className="relative h-[160px]">
                             <Image
-                                src={data.hinhAnh}
+                                src={imgSrc}
                                 alt={data.tenKhoaHoc}
                                 fill
                                 className="object-cover group-hover:scale-105 transition duration-300"
+                                onError={() => setImgSrc("https://cybersoft.edu.vn/wp-content/uploads/2022/12/173498625_1748188092035509_2804459782783227284_n-1.png")} // Fallback image
                             />
                         </div>
 

@@ -15,7 +15,7 @@ export default function TrustedLogos() {
 
     ];
     return (
-        <section className="bg-gray-50 py-12">
+        <section className="bg-gray-50 ">
             <section className="bg-gray-50 py-12">
                 <div className="container mx-auto px-4">
                     <p className="text-center text-gray-600 mb-8">

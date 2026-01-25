@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Hero } from "@/components/hero";
 import { KhoaHoc } from "@/app/types";
 import TrustedCompanies from "@/components/navbar";
+import Testimonials from "@/components/Testimonials";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -59,7 +60,7 @@ const HomePage = () => {
                 </p>
             </div>
 
-            <div className="relative group">
+            <div className="relative group m-7">
                 {loading ? (
                     <div className="text-center py-20 text-slate-500">Đang tải khóa học...</div>
                 ) : (
@@ -105,6 +106,12 @@ const HomePage = () => {
 
             {/* Navbar */}
             <TrustedCompanies />
+
+            <div className="mt-20">
+                <Testimonials />
+            </div>
+            {/* card mo ta */}
+
         </main >
     )
 }

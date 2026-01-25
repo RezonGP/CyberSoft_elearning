@@ -26,6 +26,7 @@
     "react": "^19.2.3",
     "react-dom": "19.2.3",
     "react-redux": "^9.2.0",
+    "recharts": "^3.7.0",
     "separator": "^0.1.0",
     "shadcn": "^3.6.3",
     "swiper": "^12.0.3",
