@@ -3,7 +3,6 @@
 'use client'
 import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import Sidebar from "./side_navbar"
 import { Button } from "@/components/ui/button"
 import {
     LineChart,
@@ -143,7 +142,6 @@ const AdminPage: React.FC = () => {
 
     return (
         <div className="flex">
-            <Sidebar />
             <main className="container mx-auto py-12 px-4 bg-gray-900">
                 <h1 className="text-3xl font-bold mb-4 text-gray-200">Trang quản trị</h1>
                 <p className="text-gray-200">Chào mừng bạn đến khu vực quản trị giảng viên.</p>

@@ -21,7 +21,7 @@ const sidebarItems = [
     },
     {
         title: "Người dùng",
-        href: "/admin/users",
+        href: "/admin/User",
         icon: Users,
     },
     {
