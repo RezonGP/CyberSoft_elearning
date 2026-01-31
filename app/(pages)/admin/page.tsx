@@ -19,14 +19,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { KhoaHoc } from "@/app/types"
 import { ServiceCourse } from "@/app/server/course"
-
 const revenueData = [
-    { month: "Tháng 1", value: 40 },
-    { month: "Tháng 2", value: 55 },
-    { month: "Tháng 3", value: 60 },
-    { month: "Tháng 4", value: 85 },
-    { month: "Tháng 5", value: 70 },
-    { month: "Tháng 6", value: 90 },
+    { month: "Tháng 1", tiền: `123.321 ` },
+    { month: "Tháng 2", tiền: 2242.4532 },
+    { month: "Tháng 3", tiền: 3422.001 },
+    { month: "Tháng 4", tiền: 4222.001 },
+    { month: "Tháng 5", tiền: 3213.001 },
+    { month: "Tháng 6", tiền: 6232.001 },
 ];
 
 const studentData = [
@@ -35,12 +34,12 @@ const studentData = [
     { name: "Fullstack", value: 600 },
 ];
 
-function StatCard({ title, value, sub }: { title: string; value: string; sub?: string }) {
+function StatCard({ title, tiền, sub }: { title: string; tiền: string; sub?: string }) {
     return (
         <Card className="bg-[#0f172a] text-white">
             <CardContent className="p-6">
                 <p className="text-sm text-gray-400">{title}</p>
-                <h2 className="text-2xl font-bold mt-1">{value}</h2>
+                <h2 className="text-2xl font-bold mt-1">{tiền}</h2>
                 {sub && <p className="text-green-400 text-sm mt-1">{sub}</p>}
             </CardContent>
         </Card>
@@ -148,9 +147,9 @@ const AdminPage: React.FC = () => {
                 <div className="space-y-6">
                     {/* TOP STATS */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <StatCard title="Tổng doanh thu" value="1.240.000.000 VND" sub="+12.5% tháng này" />
-                        <StatCard title="Học viên mới" value="580" sub="+30% hôm qua" />
-                        <StatCard title="Khóa học đang hoạt động" value="45" />
+                        <StatCard title="Tổng doanh thu" tiền="1.240.000.000 VND" sub="+12.5% tháng này" />
+                        <StatCard title="Học viên mới" tiền="580 " sub="+30% hôm qua" />
+                        <StatCard title="Khóa học đang hoạt động" tiền="45" />
                     </div>
 
                     {/* CHART */}
@@ -166,7 +165,7 @@ const AdminPage: React.FC = () => {
                                         <XAxis dataKey="month" stroke="#888" />
                                         <YAxis stroke="#888" />
                                         <Tooltip />
-                                        <Line type="monotone" dataKey="value" stroke="#f97316" strokeWidth={3} />
+                                        <Line type="monotone" dataKey="tiền" stroke="#f97316" strokeWidth={3} />
                                     </LineChart>
                                 </ResponsiveContainer>
                             </CardContent>
