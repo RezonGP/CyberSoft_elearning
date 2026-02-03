@@ -14,10 +14,33 @@ export const ServiceCourse = {
         return res.data;
     },
     xoaKhoaHoc: async (maKhoaHoc: string) => {
-        // Sử dụng params để axios tự động encode và thử dùng MaKhoaHoc (PascalCase)
-        const res = await api.delete<TApiResponse<string>>(`${END_POINT}/XoaKhoaHoc`, {
-            params: { MaKhoaHoc: maKhoaHoc }
-        })
+        // Thử xóa bằng query params (theo tài liệu thường là ?MaKhoaHoc=...)
+        try {
+            const res = await api.delete<TApiResponse<string>>(`${END_POINT}/XoaKhoaHoc`, {
+                params: { MaKhoaHoc: maKhoaHoc }
+            })
+            return res.data;
+        } catch (err) {
+            // Nếu backend chặn params, thử gửi trong body (một số server yêu cầu)
+            const res = await api.delete<TApiResponse<string>>(`${END_POINT}/XoaKhoaHoc`, {
+                data: { MaKhoaHoc: maKhoaHoc }
+            })
+            return res.data;
+        }
+    },
+    themKhoaHoc: async (payload: any) => {
+        // Chuẩn hóa payload theo PascalCase (nhiều API của CyberSoft kỳ vọng tên trường PascalCase)
+        const body = {
+            MaKhoaHoc: payload.MaKhoaHoc || payload.maKhoaHoc,
+            BiDanh: payload.BiDanh || payload.biDanh || (payload.maKhoaHoc || '').toString(),
+            TenKhoaHoc: payload.TenKhoaHoc || payload.tenKhoaHoc,
+            MoTa: payload.MoTa || payload.moTa || '',
+            LuotXem: payload.LuotXem ?? payload.luotXem ?? 0,
+            HinhAnh: payload.HinhAnh || payload.hinhAnh || '',
+            MaNhom: payload.MaNhom || payload.maNhom || 'GP01',
+            NgayTao: payload.NgayTao || payload.ngayTao || new Date().toISOString(),
+        };
+        const res = await api.post<TApiResponse<any>>(`${END_POINT}/ThemKhoaHoc`, body);
         return res.data;
     },
 }

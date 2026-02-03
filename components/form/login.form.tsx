@@ -35,7 +35,8 @@ const FormLogin = () => {
                 window.dispatchEvent(new Event("auth-changed"))
             }
             const role = (user as any)?.maLoaiNguoiDung
-            const dest = role === "GV" ? "/admin" : "/"
+            // Redirect to admin for any role that is not a student ('HV')
+            const dest = role !== "HV" ? "/admin" : "/"
             if (typeof window !== "undefined") {
                 window.location.assign(dest)
             } else {

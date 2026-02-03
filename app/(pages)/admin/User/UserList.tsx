@@ -5,25 +5,93 @@ import Pagination from "./Pagination"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { TUserlistService } from "@/app/server/user"
+import { Input } from "@/components/ui/input"
+import { TUserlistService, TUserDetailService } from "@/app/server/user"
 import type { User as ServerUser } from "@/app/types"
+import { Ghost, Search } from "lucide-react"
 
 type ViewUser = {
     id: string
     name: string
     email: string
     phone?: string
-    role: "giaovu" | "giaovien"
+    role: "giaovu" | "hocvien"
     status: "active" | "inactive"
+    raw: any
 }
 
-const PAGE_SIZE = 4
+const PAGE_SIZE = 10
 
-export default function UserList({ role }: { role: "giaovu" | "giaovien" }) {
+export default function UserList({ role }: { role: "giaovu" | "hocvien" }) {
     const [page, setPage] = useState(1)
     const [users, setUsers] = useState<ViewUser[]>([])
     const [loading, setLoading] = useState(false)
     const [deleting, setDeleting] = useState<string | null>(null)
+
+    // Search state
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [debouncedSearch, setDebouncedSearch] = useState<string>('');
+
+    // Debounce search input
+    useEffect(() => {
+        const id = setTimeout(() => setDebouncedSearch(searchTerm.trim()), 300);
+        return () => clearTimeout(id);
+    }, [searchTerm]);
+
+    // Reset to page 1 when search or role changes
+    useEffect(() => {
+        setPage(1);
+    }, [debouncedSearch, role]);
+
+    // Detail modal state
+    const [selectedUser, setSelectedUser] = useState<any | null>(null)
+    const [isDetailOpen, setIsDetailOpen] = useState<boolean>(false)
+    const [detailLoading, setDetailLoading] = useState<boolean>(false)
+    const [detailError, setDetailError] = useState<string | null>(null)
+    const [showSensitive, setShowSensitive] = useState<boolean>(false)
+
+    const fieldLabels: Record<string, string> = {
+        taiKhoan: 'Tài khoản',
+        matKhau: 'Mật khẩu',
+        hoTen: 'Họ tên',
+        email: 'Email',
+        soDT: 'Số điện thoại',
+        maLoaiNguoiDung: 'Loại người dùng',
+        maNhom: 'Mã nhóm',
+        ngayTao: 'Ngày tạo',
+    }
+
+    const isSensitiveField = (k: string) => ['matKhau', 'password', 'matKhauNguoiDung'].includes(k)
+
+    const formatValue = (k: string, v: any) => {
+        if (v === null || v === undefined || v === '') return '-'
+        const lk = String(k).toLowerCase()
+        if (lk.includes('ngay') || lk.includes('ngayt')) {
+            const d = new Date(v)
+            if (!isNaN(d.getTime())) return d.toLocaleString()
+        }
+        return String(v)
+    }
+
+    const handleShowDetail = async (taiKhoanOrRaw: string | any) => {
+        const taiKhoan = typeof taiKhoanOrRaw === 'string' ? taiKhoanOrRaw : (taiKhoanOrRaw?.taiKhoan || taiKhoanOrRaw?.id)
+        setIsDetailOpen(true)
+        setSelectedUser(null)
+        setDetailError(null)
+        setDetailLoading(true)
+        setShowSensitive(false)
+        try {
+            const res = await (TUserDetailService as any).getUserInfo(taiKhoan)
+            const payload = res?.content ?? res
+            setSelectedUser(payload)
+        } catch (err: any) {
+            console.error('Failed to fetch user detail:', err)
+            const msg = err?.response?.data?.message || err?.response?.data || err?.message || 'Không thể lấy thông tin tài khoản'
+            setDetailError(String(msg))
+        } finally {
+            setDetailLoading(false)
+        }
+    }
 
     const loadUserlist = async () => {
         try {
@@ -43,8 +111,10 @@ export default function UserList({ role }: { role: "giaovu" | "giaovien" }) {
                 name: (u as any).hoTen || "",
                 email: (u as any).email || "",
                 phone: (u as any).soDT || (u as any).soDt || "",
-                role: (u as any).maLoaiNguoiDung === "GV" ? "giaovien" : "giaovu",
+                // Map: 'HV' → học viên; mọi mã khác (GV hoặc khác) → Giáo vụ
+                role: (u as any).maLoaiNguoiDung === "HV" ? "hocvien" : "giaovu",
                 status: "active",
+                raw: u as any,
             }))
 
             setUsers(mapped)
@@ -60,7 +130,8 @@ export default function UserList({ role }: { role: "giaovu" | "giaovien" }) {
         loadUserlist()
     }, [])
 
-    const data = users.filter(u => u.role === role)
+    const lower = debouncedSearch.toLowerCase();
+    const data = users.filter(u => u.role === role && (!lower || (u.name || '').toLowerCase().includes(lower) || (u.id || '').toLowerCase().includes(lower) || (u.email || '').toLowerCase().includes(lower)))
     const total = Math.max(1, Math.ceil(data.length / PAGE_SIZE))
     const current = data.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
@@ -95,9 +166,52 @@ export default function UserList({ role }: { role: "giaovu" | "giaovien" }) {
                 <div className="px-4 py-3 border-b border-white/5 bg-[#0B1320] rounded-t-lg">
                     <div className="flex items-center justify-between">
                         <h3 className="text-sm font-semibold text-gray-200">Danh sách người dùng</h3>
-                        <div className="text-sm text-gray-400">{users.length} người</div>
+                        <div className="flex items-center gap-3">
+                            <div className="text-sm text-gray-300">{data.length} người</div>
+                            <div className="relative text-gray-200">
+                                <Input placeholder="Tìm theo tên, tài khoản, email..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-9 pr-3 w-64 " />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                            </div>
+                        </div>
                     </div>
                 </div>
+                {isDetailOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center">
+                        <div className="fixed inset-0 bg-black/50" onClick={() => setIsDetailOpen(false)} />
+                        <div className="relative bg-[#0f172a] text-white rounded-lg shadow-lg w-full max-w-2xl mx-4 p-6 z-50">
+                            <h3 className="text-lg font-semibold mb-4">Chi tiết tài khoản: {selectedUser?.taiKhoan || selectedUser?.taiKhoan}</h3>
+
+                            {detailLoading ? (
+                                <div className="text-center py-8">Đang tải chi tiết...</div>
+                            ) : detailError ? (
+                                <div className="text-red-400">{detailError}</div>
+                            ) : (
+                                <>
+                                    <div className="mb-3 flex items-center justify-between">
+                                        <label className="inline-flex items-center gap-2 text-sm">
+                                            <input type="checkbox" className="accent-amber-500" checked={showSensitive} onChange={(e) => setShowSensitive(e.target.checked)} />
+                                            <span className="text-sm text-gray-300">Hiển thị trường nhạy cảm</span>
+                                        </label>
+                                        <div className="text-sm text-gray-300">Tài khoản: <span className="text-gray-100">{selectedUser?.taiKhoan || '-'}</span></div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-auto max-h-[60vh] bg-[#071022] p-4 rounded">
+                                        {Object.entries(selectedUser || {}).filter(([k]) => (showSensitive ? true : !isSensitiveField(k))).map(([k, v]) => (
+                                            <div key={k} className="flex flex-col">
+                                                <span className="text-xs text-gray-400">{fieldLabels[k] || k}</span>
+                                                <span className="text-sm text-gray-200 break-words">{formatValue(k, v)}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+
+                            <div className="flex justify-end gap-2 mt-3">
+                                <Button size="sm" variant="secondary" onClick={() => setIsDetailOpen(false)}>Đóng</Button>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 <div className="p-4">
                     {loading ? (
                         <div className="text-center text-gray-400 py-8">Đang tải danh sách người dùng...</div>
@@ -127,7 +241,7 @@ export default function UserList({ role }: { role: "giaovu" | "giaovien" }) {
                                         >
                                             <td className="py-3 pr-4 text-gray-100">{user.name}</td>
                                             <td className="py-3 pr-4 text-sm text-gray-300">{user.email}</td>
-                                            <td className="py-3 pr-4 text-sm text-gray-300">{user.role === "giaovu" ? "Giáo vụ" : "Giáo viên"}</td>
+                                            <td className="py-3 pr-4 text-sm text-gray-300">{user.role === "giaovu" ? "Giáo vụ" : "Học viên"}</td>
                                             <td className="py-3 pr-4">
                                                 {user.status === "active" ? (
                                                     <Badge className="bg-green-600">Hoạt động</Badge>
@@ -140,6 +254,7 @@ export default function UserList({ role }: { role: "giaovu" | "giaovien" }) {
                                                 <Button size="sm" variant="destructive" className="ml-2" onClick={() => handleDelete(user.id, user.name)} disabled={deleting === user.id}>
                                                     {deleting === user.id ? "Đang xóa..." : "Xóa"}
                                                 </Button>
+                                                <Button size="sm" variant="secondary" className="ml-3 text-black" onClick={() => handleShowDetail(user.id)}>Xem chi tiết</Button>
                                             </td>
                                         </motion.tr>
                                     ))}

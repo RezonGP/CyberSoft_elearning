@@ -4,6 +4,8 @@
 import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
     LineChart,
     Line,
@@ -52,6 +54,20 @@ const AdminPage: React.FC = () => {
     const [authorized, setAuthorized] = useState<boolean | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [deleting, setDeleting] = useState<string | null>(null);
+
+    // Modal/form state for adding course
+    const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
+    const [form, setForm] = useState({
+        maKhoaHoc: '',
+        tenKhoaHoc: '',
+        moTa: '',
+        maNhom: 'GP01',
+        hinhAnh: '',
+        soLuongHocVien: 0,
+    });
+    const [submitting, setSubmitting] = useState<boolean>(false);
+    const [formError, setFormError] = useState<string | null>(null);
+
     const router = useRouter();
     const itemsPerPage = 5;
 
@@ -89,15 +105,64 @@ const AdminPage: React.FC = () => {
             }
         } catch (error: any) {
             console.error("Failed to delete course:", error);
-            const errorMessage = typeof error?.response?.data === 'string'
-                ? error.response.data
-                : "Lỗi hệ thống hoặc khóa học không thể xóa (đã có học viên).";
-            alert(`Xóa thất bại: ${errorMessage}`);
+            const serverMsg = error?.response?.data?.message || error?.response?.data || error?.message || "Lỗi hệ thống hoặc khóa học không thể xóa (đã có học viên).";
+            alert(`Xóa thất bại: ${serverMsg}`);
         } finally {
             setDeleting(null);
         }
     };
 
+    const handleAddCourse = () => {
+        setForm({
+            maKhoaHoc: '',
+            tenKhoaHoc: '',
+            moTa: '',
+            maNhom: 'GP01',
+            hinhAnh: '',
+            soLuongHocVien: 0,
+        });
+        setFormError(null);
+        setIsAddOpen(true);
+    };
+
+    const submitAddCourse = async (e?: React.FormEvent) => {
+        e?.preventDefault();
+        setFormError(null);
+        if (!form.maKhoaHoc.trim() || !form.tenKhoaHoc.trim()) {
+            setFormError('Mã và tên khóa học là bắt buộc.');
+            return;
+        }
+
+        // Prevent duplicate maKhoaHoc on client side
+        if (courses.some(c => c.maKhoaHoc === form.maKhoaHoc)) {
+            setFormError('Mã khóa học đã tồn tại. Vui lòng chọn mã khác.');
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            // Gửi payload đã chuẩn hóa sang server
+            await (ServiceCourse as any).themKhoaHoc?.({
+                MaKhoaHoc: form.maKhoaHoc,
+                TenKhoaHoc: form.tenKhoaHoc,
+                MoTa: form.moTa,
+                HinhAnh: form.hinhAnh,
+                MaNhom: form.maNhom,
+                LuotXem: form.soLuongHocVien || 0,
+                NgayTao: new Date().toISOString(),
+            });
+            await loadCategories();
+            setIsAddOpen(false);
+            alert('Thêm khóa học thành công!');
+        } catch (err: any) {
+            console.error('Add course failed:', err);
+            const serverMsg = err?.response?.data?.message || err?.response?.data || err?.message || 'Lỗi khi thêm khóa học.';
+            // Hiển thị lỗi trong form thay vì alert
+            setFormError(String(serverMsg));
+        } finally {
+            setSubmitting(false);
+        }
+    };
     useEffect(() => {
         if (typeof window === "undefined") return;
         try {
@@ -108,7 +173,8 @@ const AdminPage: React.FC = () => {
                 return;
             }
             const user = JSON.parse(raw);
-            if (user?.maLoaiNguoiDung === "GV") {
+            // Allow any non-student (not 'HV') role to access admin area
+            if (user?.maLoaiNguoiDung && user.maLoaiNguoiDung !== "HV") {
                 setAuthorized(true);
             } else {
                 setAuthorized(false);
@@ -145,6 +211,33 @@ const AdminPage: React.FC = () => {
                 <h1 className="text-3xl font-bold mb-4 text-gray-200">Trang quản trị</h1>
                 <p className="text-gray-200">Chào mừng bạn đến khu vực quản trị giảng viên.</p>
                 <div className="space-y-6">
+                    {isAddOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center">
+                            <div className="fixed inset-0 bg-black/50" onClick={() => setIsAddOpen(false)} />
+                            <div className="relative bg-[#0f172a] text-white rounded-lg shadow-lg w-full max-w-md mx-4 p-6 z-50">
+                                <h3 className="text-lg font-semibold mb-4">Thêm khóa học mới</h3>
+                                <form onSubmit={submitAddCourse} className="space-y-3">
+                                    <div>
+                                        <Label className="mb-1">Mã khóa học</Label>
+                                        <Input value={form.maKhoaHoc} onChange={(e) => setForm(prev => ({ ...prev, maKhoaHoc: e.target.value }))} />
+                                    </div>
+                                    <div>
+                                        <Label className="mb-1">Tên khóa học</Label>
+                                        <Input value={form.tenKhoaHoc} onChange={(e) => setForm(prev => ({ ...prev, tenKhoaHoc: e.target.value }))} />
+                                    </div>
+                                    <div>
+                                        <Label className="mb-1">Mô tả</Label>
+                                        <textarea className="w-full rounded-md border bg-transparent px-3 py-2 text-sm h-24 resize-none" value={form.moTa} onChange={(e) => setForm(prev => ({ ...prev, moTa: e.target.value }))} />
+                                    </div>
+                                    <div className="flex justify-end gap-2 mt-2">
+                                        <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)} className="text-gray-600">Hủy</Button>
+                                        <Button type="submit" disabled={submitting}>{submitting ? 'Đang thêm...' : 'Thêm'}</Button>
+                                    </div>
+                                    {formError && <p className="text-sm text-red-400 mt-2">{formError}</p>}
+                                </form>
+                            </div>
+                        </div>
+                    )}
                     {/* TOP STATS */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <StatCard title="Tổng doanh thu" tiền="1.240.000.000 VND" sub="+12.5% tháng này" />
@@ -194,7 +287,7 @@ const AdminPage: React.FC = () => {
                         <CardHeader className="flex between items-center">
                             <CardTitle>Danh sách khóa học</CardTitle>
                             <div>
-                                <Button variant="ghost" className="ml-2 text-black bg-amber-400 hover:bg-amber-500 ">Thêm mới</Button>
+                                <Button variant="ghost" className="ml-2 text-black bg-amber-400 hover:bg-amber-500 " onClick={handleAddCourse}>Thêm mới</Button>
 
 
                             </div>
