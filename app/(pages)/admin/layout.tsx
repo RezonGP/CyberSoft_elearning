@@ -1,4 +1,4 @@
-import Sidebar from "@/app/(pages)/admin/side_navbar"
+import Sidebar from "@/app/(pages)/admin/_side_navbar"
 
 export default function AdminLayout({
     children,

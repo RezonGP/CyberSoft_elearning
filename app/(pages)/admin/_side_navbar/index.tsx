@@ -26,7 +26,7 @@ const sidebarItems = [
     },
     {
         title: "Khóa học",
-        href: "/admin/courses",
+        href: "/admin/listCourse",
         icon: BookOpen,
     },
     {

@@ -74,7 +74,21 @@ export default function UserList({ role }: { role: "giaovu" | "hocvien" }) {
     }
 
     const handleShowDetail = async (taiKhoanOrRaw: string | any) => {
-        const taiKhoan = typeof taiKhoanOrRaw === 'string' ? taiKhoanOrRaw : (taiKhoanOrRaw?.taiKhoan || taiKhoanOrRaw?.id)
+        // Nếu là string thì dùng trực tiếp, nếu là object thì lấy .id hoặc .taiKhoan
+        const taiKhoan = typeof taiKhoanOrRaw === 'string'
+            ? taiKhoanOrRaw
+            : (taiKhoanOrRaw?.id || taiKhoanOrRaw?.taiKhoan);
+
+        // Debug log
+        console.log("handleShowDetail called with:", taiKhoanOrRaw);
+        console.log("Extracted taiKhoan:", taiKhoan);
+
+        if (!taiKhoan) {
+            console.error("Invalid taiKhoan:", taiKhoan);
+            alert("Lỗi: Không tìm thấy tài khoản người dùng");
+            return;
+        }
+
         setIsDetailOpen(true)
         setSelectedUser(null)
         setDetailError(null)
@@ -82,7 +96,17 @@ export default function UserList({ role }: { role: "giaovu" | "hocvien" }) {
         setShowSensitive(false)
         try {
             const res = await (TUserDetailService as any).getUserInfo(taiKhoan)
-            const payload = res?.content ?? res
+            console.log("API response for user detail:", res);
+            // Một số API trả về array [user] thay vì object user trực tiếp
+            const payload = Array.isArray(res) ? res[0] : (res?.content ?? res);
+
+            // Kiểm tra xem payload có đúng là user mình cần không
+            if (payload && payload.taiKhoan && payload.taiKhoan !== taiKhoan) {
+                console.warn("API returned different user!", { requested: taiKhoan, received: payload.taiKhoan });
+                // Trong trường hợp API trả về thông tin của chính người gọi (admin) thay vì user được request
+                // Ta cần kiểm tra lại endpoint hoặc quyền hạn.
+            }
+
             setSelectedUser(payload)
         } catch (err: any) {
             console.error('Failed to fetch user detail:', err)

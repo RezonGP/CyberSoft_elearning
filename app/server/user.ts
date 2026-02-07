@@ -19,8 +19,9 @@ export const TUserSearch = {
 // Fetch detailed info for a single user
 export const TUserDetailService = {
     getUserInfo: async (taiKhoan: string) => {
-        // Many CyberSoft APIs expect POST with taiKhoan to return account details
-        const res = await api.post<TApiResponse<any>>(`${END_POINT}/ThongTinTaiKhoan`, { taiKhoan })
+        // Sử dụng API TimKiemNguoiDung để lấy thông tin chi tiết của người dùng khác
+        // API ThongTinTaiKhoan chỉ trả về thông tin của chính người đang đăng nhập (token)
+        const res = await api.get<TApiResponse<any>>(`${END_POINT}/TimKiemNguoiDung?tuKhoa=${taiKhoan}`)
         return res.data
     }
 }

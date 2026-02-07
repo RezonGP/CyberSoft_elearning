@@ -17,13 +17,13 @@ export const ServiceCourse = {
         // Thử xóa bằng query params (theo tài liệu thường là ?MaKhoaHoc=...)
         try {
             const res = await api.delete<TApiResponse<string>>(`${END_POINT}/XoaKhoaHoc`, {
-                params: { MaKhoaHoc: maKhoaHoc }
+                params: { maKhoaHoc }
             })
             return res.data;
         } catch (err) {
             // Nếu backend chặn params, thử gửi trong body (một số server yêu cầu)
             const res = await api.delete<TApiResponse<string>>(`${END_POINT}/XoaKhoaHoc`, {
-                data: { MaKhoaHoc: maKhoaHoc }
+                data: { maKhoaHoc }
             })
             return res.data;
         }

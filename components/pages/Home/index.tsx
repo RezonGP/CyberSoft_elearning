@@ -3,12 +3,14 @@ import { CourseCard } from "@/components/ItemCourse"
 import { ServiceCourse } from "@/app/server/course"
 import { useEffect, useState } from "react";
 import { Hero } from "@/components/hero";
-import { KhoaHoc } from "@/app/types";
+import { KhoaHoc, Category } from "@/app/types";
 import TrustedCompanies from "@/components/navbar";
 import Testimonials from "@/components/Testimonials";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { TCategoryService } from "@/app/server/category";
+import { Button } from "@/components/ui/button";
 
 // Import Swiper styles
 import 'swiper/css';
@@ -16,19 +18,38 @@ import 'swiper/css/navigation';
 
 const HomePage = () => {
     const [course, setCourse] = useState<KhoaHoc[]>([])
+    const [filteredCourses, setFilteredCourses] = useState<KhoaHoc[]>([])
+    const [categories, setCategories] = useState<Category[]>([])
+    const [selectedCategory, setSelectedCategory] = useState<string>("all")
     const [loading, setLoading] = useState(false)
 
-    const fetchCourse = async () => {
+    const fetchData = async () => {
         try {
             setLoading(true)
-            const data = await ServiceCourse.listDanhSachKhoaHoc()
-            if (Array.isArray(data)) {
-                setCourse(data)
+            const [coursesData, categoriesData] = await Promise.all([
+                ServiceCourse.listDanhSachKhoaHoc(),
+                TCategoryService.Category()
+            ]);
+
+            // Set Courses
+            let allCourses: KhoaHoc[] = [];
+            if (Array.isArray(coursesData)) {
+                allCourses = coursesData;
             } else {
-                setCourse((data as any)?.content || []);
+                allCourses = (coursesData as any)?.content || [];
             }
+            setCourse(allCourses);
+            setFilteredCourses(allCourses);
+
+            // Set Categories
+            if (Array.isArray(categoriesData)) {
+                setCategories(categoriesData);
+            } else {
+                setCategories((categoriesData as any)?.content || []);
+            }
+
         } catch (error) {
-            console.error("Failed to load courses:", error);
+            console.error("Failed to load data:", error);
             setCourse([]);
         } finally {
             setLoading(false);
@@ -36,8 +57,18 @@ const HomePage = () => {
     }
 
     useEffect(() => {
-        fetchCourse()
+        fetchData()
     }, [])
+
+    const handleCategoryClick = (maDanhMuc: string) => {
+        setSelectedCategory(maDanhMuc);
+        if (maDanhMuc === "all") {
+            setFilteredCourses(course);
+        } else {
+            const filtered = course.filter(c => c.danhMucKhoaHoc?.maDanhMucKhoahoc === maDanhMuc);
+            setFilteredCourses(filtered);
+        }
+    };
 
     return (
 
@@ -48,9 +79,16 @@ const HomePage = () => {
 
             {/* Tiêu đề được tách riêng ra một khối độc lập */}
 
-            {course.length > 0 && <Hero data={course[0]} />}
+            {filteredCourses.length > 0 ? (
+                <Hero data={filteredCourses[0]} />
+            ) : (
+                <div className="text-center py-10 bg-slate-50 rounded-lg mb-8">
+                    <p className="text-slate-500">Không tìm thấy khóa học nào trong danh mục này.</p>
+                </div>
+            )}
+
             {/* Sử dụng Grid System để chia cột chuẩn: 1 cột (mobile), 2 cột (tablet), 3 hoặc 4 cột (desktop) */}
-            <div className="mb-10 text-left mt-12">
+            <div className="mb-6 text-left mt-12">
                 <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
                     Các khóa học thịnh hành
                 </h1>
@@ -58,6 +96,27 @@ const HomePage = () => {
                 <p className="mt-4 text-lg text-slate-600 max-w-2xl">
                     Nâng cao kỹ năng của bạn với các lộ trình đào tạo chuyên sâu từ chuyên gia hàng đầu tại CyberSoft.
                 </p>
+            </div>
+
+            {/* CATEGORY TABS */}
+            <div className="mb-8 flex flex-wrap gap-3">
+                <Button
+                    variant={selectedCategory === "all" ? "default" : "outline"}
+                    className={`rounded-full px-6 transition-all duration-300 ${selectedCategory === "all" ? "bg-slate-900 hover:bg-slate-800 shadow-lg scale-105" : "text-slate-600 border-slate-200 hover:border-slate-900 hover:text-slate-900"}`}
+                    onClick={() => handleCategoryClick("all")}
+                >
+                    Tất cả
+                </Button>
+                {categories.map((cat) => (
+                    <Button
+                        key={cat.maDanhMuc}
+                        variant={selectedCategory === cat.maDanhMuc ? "default" : "outline"}
+                        className={`rounded-full px-6 transition-all duration-300 ${selectedCategory === cat.maDanhMuc ? "bg-slate-900 hover:bg-slate-800 shadow-lg scale-105" : "text-slate-600 border-slate-200 hover:border-slate-900 hover:text-slate-900"}`}
+                        onClick={() => handleCategoryClick(cat.maDanhMuc)}
+                    >
+                        {cat.tenDanhMuc}
+                    </Button>
+                ))}
             </div>
 
             <div className="relative group m-7">
@@ -86,7 +145,7 @@ const HomePage = () => {
                             }}
                             className="py-4"
                         >
-                            {course.slice(1).map((item) => (
+                            {filteredCourses.slice(1).map((item) => (
                                 <SwiperSlide key={item.maKhoaHoc} className="h-auto">
                                     <CourseCard data={item} />
                                 </SwiperSlide>

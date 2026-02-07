@@ -19,8 +19,10 @@ import {
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { KhoaHoc } from "@/app/types"
+import { KhoaHoc, Category } from "@/app/types"
 import { ServiceCourse } from "@/app/server/course"
+import { TCategoryService } from "@/app/server/category";
+
 const revenueData = [
     { month: "Tháng 1", tiền: `123.321 ` },
     { month: "Tháng 2", tiền: 2242.4532 },

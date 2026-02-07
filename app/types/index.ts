@@ -29,6 +29,11 @@ export interface AuthState {
     error: string | null
 }
 
+export type Category = {
+    maDanhMuc: string;
+    tenDanhMuc: string;
+}
+
 export type KhoaHoc = {
     maKhoaHoc: string;
     biDanh: string;
