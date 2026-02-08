@@ -14,19 +14,8 @@ export const ServiceCourse = {
         return res.data;
     },
     xoaKhoaHoc: async (maKhoaHoc: string) => {
-        // Thử xóa bằng query params (theo tài liệu thường là ?MaKhoaHoc=...)
-        try {
-            const res = await api.delete<TApiResponse<string>>(`${END_POINT}/XoaKhoaHoc`, {
-                params: { maKhoaHoc }
-            })
-            return res.data;
-        } catch (err) {
-            // Nếu backend chặn params, thử gửi trong body (một số server yêu cầu)
-            const res = await api.delete<TApiResponse<string>>(`${END_POINT}/XoaKhoaHoc`, {
-                data: { maKhoaHoc }
-            })
-            return res.data;
-        }
+        const res = await api.delete<TApiResponse<string>>(`${END_POINT}/XoaKhoaHoc?maKhoaHoc=${maKhoaHoc}`)
+        return res.data;
     },
     themKhoaHoc: async (payload: any) => {
         // Chuẩn hóa payload theo PascalCase (nhiều API của CyberSoft kỳ vọng tên trường PascalCase)

@@ -82,19 +82,19 @@ const HomePage = () => {
             {filteredCourses.length > 0 ? (
                 <Hero data={filteredCourses[0]} />
             ) : (
-                <div className="text-center py-10 bg-slate-50 rounded-lg mb-8">
-                    <p className="text-slate-500">Không tìm thấy khóa học nào trong danh mục này.</p>
+                <div className="text-center py-10 bg-slate-800 rounded-lg mb-8 border border-white/10">
+                    <p className="text-gray-400">Không tìm thấy khóa học nào trong danh mục này.</p>
                 </div>
             )}
 
             {/* Sử dụng Grid System để chia cột chuẩn: 1 cột (mobile), 2 cột (tablet), 3 hoặc 4 cột (desktop) */}
             <div className="mb-6 text-left mt-12">
-                <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
                     Các khóa học thịnh hành
                 </h1>
-                <div className="mt-2 h-1.5 w-20 bg-orange-500 rounded-full"></div> {/* Thanh trang trí gạch chân */}
-                <p className="mt-4 text-lg text-slate-600 max-w-2xl">
-                    Nâng cao kỹ năng của bạn với các lộ trình đào tạo chuyên sâu từ chuyên gia hàng đầu tại CyberSoft.
+                <div className="mt-2 h-1.5 w-20 bg-gray-500 rounded-full"></div> {/* Thanh trang trí gạch chân */}
+                <p className="mt-4 text-lg text-gray-400 max-w-2xl">
+                    Nâng cao kỹ năng của bạn với các lộ trình đào tạo chuyên sâu từ chuyên gia hàng đầu tại Dream-Cyber.
                 </p>
             </div>
 
@@ -102,7 +102,7 @@ const HomePage = () => {
             <div className="mb-8 flex flex-wrap gap-3">
                 <Button
                     variant={selectedCategory === "all" ? "default" : "outline"}
-                    className={`rounded-full px-6 transition-all duration-300 ${selectedCategory === "all" ? "bg-slate-900 hover:bg-slate-800 shadow-lg scale-105" : "text-slate-600 border-slate-200 hover:border-slate-900 hover:text-slate-900"}`}
+                    className={`rounded-full px-6 transition-all duration-300 ${selectedCategory === "all" ? "bg-white text-black hover:bg-gray-200 shadow-lg scale-105" : "text-gray-400 border-gray-700 hover:border-white hover:text-white"}`}
                     onClick={() => handleCategoryClick("all")}
                 >
                     Tất cả
@@ -111,7 +111,7 @@ const HomePage = () => {
                     <Button
                         key={cat.maDanhMuc}
                         variant={selectedCategory === cat.maDanhMuc ? "default" : "outline"}
-                        className={`rounded-full px-6 transition-all duration-300 ${selectedCategory === cat.maDanhMuc ? "bg-slate-900 hover:bg-slate-800 shadow-lg scale-105" : "text-slate-600 border-slate-200 hover:border-slate-900 hover:text-slate-900"}`}
+                        className={`rounded-full px-6 transition-all duration-300 ${selectedCategory === cat.maDanhMuc ? "bg-white text-black hover:bg-gray-200 shadow-lg scale-105" : "text-gray-400 border-gray-700 hover:border-white hover:text-white"}`}
                         onClick={() => handleCategoryClick(cat.maDanhMuc)}
                     >
                         {cat.tenDanhMuc}
@@ -121,7 +121,7 @@ const HomePage = () => {
 
             <div className="relative group m-7">
                 {loading ? (
-                    <div className="text-center py-20 text-slate-500">Đang tải khóa học...</div>
+                    <div className="text-center py-20 text-gray-500">Đang tải khóa học...</div>
                 ) : (
                     <>
                         <Swiper
@@ -163,10 +163,8 @@ const HomePage = () => {
                 )}
             </div>
 
-            {/* Navbar */}
-            <TrustedCompanies />
-
-            <div className="mt-20">
+            <div className="mt-20 ">
+                <TrustedCompanies />
                 <Testimonials />
             </div>
             {/* card mo ta */}

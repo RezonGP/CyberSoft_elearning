@@ -15,8 +15,8 @@ export default function TrustedLogos() {
 
     ];
     return (
-        <section className="bg-gray-50 ">
-            <section className="bg-gray-50 py-12">
+        <section className="bg-gray-50  border-b border-white/5  rounded-2xl">
+            <section className="bg-gray-200 py-12 border-b border-white/5 ">
                 <div className="container mx-auto px-4">
                     <p className="text-center text-gray-600 mb-8">
                         Được hơn <b>17.000 công ty</b> và hàng triệu học viên tin dùng
