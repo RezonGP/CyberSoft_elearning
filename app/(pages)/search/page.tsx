@@ -8,6 +8,9 @@ import { CourseCard } from "@/components/ItemCourse"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
+// Force dynamic rendering to prevent prerender errors
+export const dynamic = "force-dynamic";
+
 function SearchResults() {
     const searchParams = useSearchParams()
     const query = searchParams?.get("q") || ""
