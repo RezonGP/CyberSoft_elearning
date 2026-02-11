@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Check } from "lucide-react";
 import { KhoaHoc } from "@/app/types";
 import { useCart } from "@/app/context/CartContext";
+import Link from "next/link";
 
 export function CourseCard({ data }: { data: KhoaHoc }) {
     const { addToCart, cart } = useCart();
@@ -91,9 +92,11 @@ export function CourseCard({ data }: { data: KhoaHoc }) {
                                         279.000 ₫
                                     </span>
                                 </div>
-                                <Button size="sm" className="rounded-full bg-white/10 hover:bg-white text-white hover:text-black border border-white/10 transition-all shadow-lg hover:shadow-purple-500/20">
-                                    Xem ngay
-                                </Button>
+                                <Link href={`/detail/${data.maKhoaHoc}`}>
+                                    <Button size="sm" className="rounded-full bg-white/10 hover:bg-white text-white hover:text-black border border-white/10 transition-all shadow-lg hover:shadow-purple-500/20">
+                                        Xem ngay
+                                    </Button>
+                                </Link>
                             </div>
                         </div>
                     </div>

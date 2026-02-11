@@ -54,7 +54,7 @@ const testimonials: Testimonial[] = [
 
 const Testimonials = () => {
     return (
-        <section className="bg-[#0f172a] py-16 border-t border-white/5">
+        <section className="bg-[#0f172a] py-16 border-t border-white/5 ">
             <div className="container mx-auto px-4 max-w-7xl">
                 <h2 className="text-2xl md:text-3xl font-bold text-gray-100 mb-8 max-w-3xl">
                     Tham gia cùng những người khác để thay đổi cuộc sống thông qua học tập
@@ -66,17 +66,17 @@ const Testimonials = () => {
                             <CardHeader className="pb-2 pt-6">
                                 <Quote className="h-8 w-8 text-gray-400 mb-2 fill-current group-hover:text-white transition-colors" />
                             </CardHeader>
-                            
+
                             <CardContent className="flex-grow">
                                 <p className="text-gray-300 mb-6 leading-relaxed">
                                     {item.quote}
                                 </p>
-                                
+
                                 <div className="flex items-center gap-3 mt-auto">
                                     {item.image ? (
-                                        <img 
-                                            src={item.image} 
-                                            alt={item.author} 
+                                        <img
+                                            src={item.image}
+                                            alt={item.author}
                                             className="w-10 h-10 rounded-full object-cover border border-gray-600"
                                         />
                                     ) : (
@@ -84,17 +84,17 @@ const Testimonials = () => {
                                             {item.author.charAt(0)}
                                         </div>
                                     )}
-                                    
+
                                     <div>
                                         <p className="font-bold text-sm text-gray-100">{item.author}</p>
                                         <p className="text-xs text-gray-500 line-clamp-2">{item.role}</p>
                                     </div>
                                 </div>
                             </CardContent>
-                            
+
                             <CardFooter className="pt-2 pb-6 border-t border-gray-700 mt-4">
-                                <Link 
-                                    href={item.linkUrl} 
+                                <Link
+                                    href={item.linkUrl}
                                     className="text-blue-400 font-bold text-sm hover:text-blue-300 flex items-center group/link"
                                 >
                                     {item.linkText}

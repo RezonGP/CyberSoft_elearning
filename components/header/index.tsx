@@ -39,6 +39,24 @@ export default function Header() {
     const [user, setUser] = useState<AuthUser | null>(null)
     const router = useRouter()
     const { cart } = useCart()
+    const [searchTerm, setSearchTerm] = useState("")
+
+    const handleSearch = () => {
+        if (searchTerm.trim()) {
+            router.push(`/search?q=${encodeURIComponent(searchTerm.trim())}`)
+        }
+    }
+
+    // Debounce search effect (2 seconds)
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            if (searchTerm.trim()) {
+                router.push(`/search?q=${encodeURIComponent(searchTerm.trim())}`)
+            }
+        }, 2000)
+
+        return () => clearTimeout(delayDebounceFn)
+    }, [searchTerm, router])
 
     useEffect(() => {
         loadCategories()
@@ -150,13 +168,16 @@ export default function Header() {
                     </DropdownMenu>
                 </div>
 
-                {/* 3. SEARCH BAR (Thêm vào để cân đối layout) */}
+                {/* 3. SEARCH BAR */}
                 <div className="flex-1 max-w-sm mx-8 hidden md:block">
                     <div className="relative">
                         <input
                             type="text"
                             placeholder="Tìm kiếm khóa học..."
                             className="w-full h-10 pl-10 pr-4 rounded-full border border-gray-700 bg-[#1e293b] text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all text-sm"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                         />
                         <svg className="w-4 h-4 absolute left-3 top-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>

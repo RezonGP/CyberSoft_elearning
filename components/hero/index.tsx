@@ -4,8 +4,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay, Pagination } from 'swiper/modules';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { KhoaHoc } from "@/app/types"
-
 import { Button } from "@/components/ui/button"
+import banner from "@/lib/banner.png"
 
 
 // Import Swiper styles
@@ -68,15 +68,14 @@ export const Hero = ({ data }: { data?: KhoaHoc }) => { // Thêm dấu ? ở đ�
 
                     {/* Slide 2 (Ví dụ thêm) */}
                     <SwiperSlide>
-                        <div className="relative flex items-center bg-slate-900 min-h-[400px] text-white">
+                        <div className="relative flex items-center bg-slate-500 min-h-[400px] text-white">
                             <div className="container mx-auto px-16 z-10">
                                 <div className="max-w-xl">
-                                    <h2 className="text-4xl font-bold mb-4 text-white">Học lập trình thực chiến</h2>
-                                    <p className="text-xl text-gray-400">Trở thành lập trình viên chuyên nghiệp sau 6 tháng cùng Dream-Cyber.</p>
+
                                     <img
-                                        src="https://cybersoft.edu.vn/wp-content/uploads/2017/04/MAX-OP1.png"
+                                        src={banner.src}
                                         alt="Hero"
-                                        className="w-full h-full object-cover object-right opacity-60 absolute inset-0 -z-10"
+                                        className="w-full h-full object-cover object-right opacity-80 absolute inset-0 -z-10"
                                     />
                                 </div>
                             </div>

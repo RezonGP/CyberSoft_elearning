@@ -145,7 +145,8 @@ const HomePage = () => {
                             }}
                             className="py-4"
                         >
-                            {filteredCourses.slice(1).map((item) => (
+                            {/* Hiển thị tất cả khóa học thay vì cắt bớt */}
+                            {filteredCourses.map((item) => (
                                 <SwiperSlide key={item.maKhoaHoc} className="h-auto">
                                     <CourseCard data={item} />
                                 </SwiperSlide>

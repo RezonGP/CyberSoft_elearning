@@ -32,5 +32,9 @@ export const ServiceCourse = {
         const res = await api.post<TApiResponse<any>>(`${END_POINT}/ThemKhoaHoc`, body);
         return res.data;
     },
+    layThongTinKhoaHoc: async (maKhoaHoc: string) => {
+        const res = await api.get<TApiResponse<any>>(`${END_POINT}/LayThongTinKhoaHoc?maKhoaHoc=${maKhoaHoc}`)
+        return res.data;
+    }
 }
 
